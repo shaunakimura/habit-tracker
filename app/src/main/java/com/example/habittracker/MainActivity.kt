@@ -26,8 +26,8 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold (
                     topBar = { TopBar(modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),) },
-                ) { innerPpadding ->
-                    HomePage(modifier = Modifier.padding(innerPpadding))
+                ) { innerPadding ->
+                    HomePage(modifier = Modifier.padding(innerPadding))
                 }
             }
         }

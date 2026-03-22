@@ -3,47 +3,57 @@ package com.example.habittracker
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.example.habittracker.model.Habit
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.time.LocalDate
 import java.util.UUID
 
 class HabitTrackerViewModel : ViewModel() {
-    private val _habits = mutableStateListOf<Habit>()
+    private val _habits = MutableStateFlow<List<Habit>>(emptyList())
+    val habits = _habits.asStateFlow()
 
-    val habits : List<Habit>
-        get() = _habits
-
-    val currentDate: LocalDate = LocalDate.now()
-
+    val currentDate: LocalDate
+        get() = LocalDate.now()
     /**
      * Adds a new habit to the saved list of habits.
      */
     fun addHabit(habitName: String) {
+        // Verify habit name is not blank
+        if (habitName.isBlank()) return
+
+        // Create new habit
         val newHabit = Habit(
             id = UUID.randomUUID().toString(),
             name = habitName
         )
-        _habits.add(newHabit)
+
+        _habits.value += newHabit
     }
 
     /**
      * Updates the value of [Habit.completed].
      */
     fun checkHabit(habit: Habit) {
-        val index = _habits.indexOf(habit)
-        _habits[index] = habit.copy(completed = !habit.completed)
+        _habits.value = _habits.value.map {
+            if (it.id == habit.id) {
+                it.copy(completed = !it.completed)
+            } else {
+                it
+            }
+        }
     }
 
     /**
      * Removes a habit from the saved list of habits.
      */
     fun removeHabit(habit: Habit) {
-        _habits.remove(habit)
+        _habits.value = _habits.value.filter { it.id != habit.id }
     }
 
     /**
      * Removes all existing habits.
      */
     fun clearHabits() {
-        _habits.clear()
+        _habits.value = emptyList()
     }
 }
