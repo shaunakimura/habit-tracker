@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Habit Tracker</string>
+    <string name="habit_name_label">Habit name</string>
+    <string name="add_habit">Add habit</string>
+    <string name="habits_header">Habits</string>
+    <string name="clear_all">Clear all</string>
+</resources>
