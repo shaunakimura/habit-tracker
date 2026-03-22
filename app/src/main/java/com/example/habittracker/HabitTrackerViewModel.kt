@@ -8,12 +8,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.time.LocalDate
 import java.util.UUID
 
+data class HabitUiState(
+    val habits: List<Habit> = emptyList()
+)
+
 class HabitTrackerViewModel : ViewModel() {
-    private val _habits = MutableStateFlow<List<Habit>>(emptyList())
-    val habits = _habits.asStateFlow()
+    private val _uiState = MutableStateFlow(HabitUiState())
+    val uiState = _uiState.asStateFlow()
 
     val currentDate: LocalDate
         get() = LocalDate.now()
+
     /**
      * Adds a new habit to the saved list of habits.
      */
@@ -27,33 +32,44 @@ class HabitTrackerViewModel : ViewModel() {
             name = habitName
         )
 
-        _habits.value += newHabit
+        _uiState.value = _uiState.value.copy(
+            habits = _uiState.value.habits + newHabit
+        )
     }
 
     /**
      * Updates the value of [Habit.completed].
      */
     fun checkHabit(habit: Habit) {
-        _habits.value = _habits.value.map {
-            if (it.id == habit.id) {
-                it.copy(completed = !it.completed)
-            } else {
-                it
+        _uiState.value = _uiState.value.copy(
+            habits = _uiState.value.habits.map {
+                if (it.id == habit.id) {
+                    it.copy(completed = !it.completed)
+                } else {
+                    it
+                }
             }
-        }
+        )
     }
+
 
     /**
      * Removes a habit from the saved list of habits.
      */
     fun removeHabit(habit: Habit) {
-        _habits.value = _habits.value.filter { it.id != habit.id }
+        _uiState.value = _uiState.value.copy(
+            habits = _uiState.value.habits.filter {
+                it.id != habit.id
+            }
+        )
     }
 
     /**
      * Removes all existing habits.
      */
     fun clearHabits() {
-        _habits.value = emptyList()
+        _uiState.value = _uiState.value.copy(
+            habits = emptyList()
+        )
     }
 }

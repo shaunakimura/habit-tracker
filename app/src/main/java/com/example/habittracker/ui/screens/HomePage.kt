@@ -32,11 +32,11 @@ fun HomePage(
     modifier: Modifier = Modifier,
     viewModel: HabitTrackerViewModel = viewModel()
 ) {
-    val habits by viewModel.habits.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     HomePageContent(
         currentDate = viewModel.currentDate,
-        habits = habits,
+        habits = uiState.habits,
         onAddHabit = viewModel::addHabit,
         onHabitChecked = viewModel::checkHabit,
         onRemoveHabit = viewModel::removeHabit,
